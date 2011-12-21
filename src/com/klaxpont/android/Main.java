@@ -21,10 +21,13 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.BaseRequestListener;
@@ -39,14 +42,14 @@ import com.facebook.android.SessionEvents.LogoutListener;
 
 import com.klaxpont.android.Constants;
 
-public class Main extends Activity {
+public class Main extends Activity implements SurfaceHolder.Callback{
 
-    // Your Facebook Application ID must be set before running this example
-    // See http://www.facebook.com/developers/createapp.php
-
-    private LoginButton mLoginButton;
+	private LoginButton mLoginButton;
     private TextView mFacebookName;
     private TextView mFacebookId;
+    
+    private Preview mPreview;
+    private Camera mCamera;
 
     private Facebook mFacebook;
     private AsyncFacebookRunner mAsyncRunner;
@@ -60,7 +63,10 @@ public class Main extends Activity {
         mLoginButton = (LoginButton) findViewById(R.id.login);
         mFacebookName = (TextView) Main.this.findViewById(R.id.txtname);
         mFacebookId = (TextView) Main.this.findViewById(R.id.txtid);
-
+        
+        mPreview = (Preview) Main.this.findViewById(R.id.preview_camera);
+        mPreview.init(this);
+        
        	mFacebook = new Facebook(Constants.FACEBOOK_APP_ID);
        	mAsyncRunner = new AsyncFacebookRunner(mFacebook);
 
@@ -136,4 +142,52 @@ public class Main extends Activity {
             }
         }
     }
+    
+    @Override
+   	public void surfaceCreated(SurfaceHolder holder) {
+   		mCamera = Camera.open(0);
+   		if (mCamera != null){
+   			Camera.Parameters params = mCamera.getParameters();
+   			mCamera.setParameters(params);
+   		}
+   		else {
+   			Toast.makeText(getApplicationContext(), "Camera not available!", Toast.LENGTH_LONG).show();
+   			finish();
+   		}
+   	}
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Open the default i.e. the first rear facing camera.
+        mCamera = Camera.open(0);
+        mPreview.setCamera(mCamera);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Because the Camera object is a shared resource, it's very
+        // important to release it when the activity is paused.
+        if (mCamera != null) {
+            mPreview.setCamera(null);
+            mCamera.release();
+            mCamera = null;
+        }
+    }
+    
+	@Override
+	public void surfaceChanged(SurfaceHolder holder, int format, int width,
+			int height) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void surfaceDestroyed(SurfaceHolder holder) {
+		// TODO Auto-generated method stub
+		
+	}
 }

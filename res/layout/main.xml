@@ -26,4 +26,11 @@
         android:layout_height="wrap_content"
 		/>
 		
+	<com.klaxpont.android.Preview android:id="@+id/preview_camera"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_centerInParent="true"
+		android:layout_weight="1"
+	/>
+		
 </LinearLayout>
