@@ -116,7 +116,8 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
         }
     }
 
-    public void surfaceCreated(SurfaceHolder holder) {
+    @Override
+	public void surfaceCreated(SurfaceHolder holder) {
         // The Surface has been created, acquire the camera and tell it where
         // to draw.
         try {
@@ -128,7 +129,8 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
         }
     }
 
-    public void surfaceDestroyed(SurfaceHolder holder) {
+    @Override
+	public void surfaceDestroyed(SurfaceHolder holder) {
         // Surface will be destroyed when we return, so stop the preview.
         if (mCamera != null) {
             mCamera.stopPreview();
@@ -169,15 +171,19 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
         return optimalSize;
     }
 
-    public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
+    @Override
+	public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
         // Now that the size is known, set up the camera parameters and begin
         // the preview.
-        Camera.Parameters parameters = mCamera.getParameters();
-        parameters.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
-        requestLayout();
-
-        mCamera.setParameters(parameters);
-        mCamera.startPreview();
+    	if (mCamera != null)
+    	{
+	        Camera.Parameters parameters = mCamera.getParameters();
+	        parameters.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
+	        requestLayout();
+	
+	        mCamera.setParameters(parameters);
+	        mCamera.startPreview();
+    	}
     }
 
 }

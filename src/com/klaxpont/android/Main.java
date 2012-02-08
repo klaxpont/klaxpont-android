@@ -16,6 +16,13 @@
 
 package com.klaxpont.android;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,6 +33,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,22 +52,29 @@ import com.klaxpont.android.Constants;
 
 public class Main extends Activity implements SurfaceHolder.Callback{
 
+	private Button mDailymotion;
 	private LoginButton mLoginButton;
     private TextView mFacebookName;
     private TextView mFacebookId;
     
     private Preview mPreview;
+    private boolean iCameraEnable;
     private Camera mCamera;
 
     private Facebook mFacebook;
     private AsyncFacebookRunner mAsyncRunner;
+    
+    private String mAccessTokenDailymotion="";
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        
+        setiCameraEnable(false);
+        
         setContentView(R.layout.main);
+        mDailymotion = (Button) findViewById(R.id.dailymotion_button);
         mLoginButton = (LoginButton) findViewById(R.id.login);
         mFacebookName = (TextView) Main.this.findViewById(R.id.txtname);
         mFacebookId = (TextView) Main.this.findViewById(R.id.txtid);
@@ -70,6 +85,30 @@ public class Main extends Activity implements SurfaceHolder.Callback{
        	mFacebook = new Facebook(Constants.FACEBOOK_APP_ID);
        	mAsyncRunner = new AsyncFacebookRunner(mFacebook);
 
+       	mDailymotion.setOnClickListener(new View.OnClickListener() {
+       		@Override
+       	    public void onClick(View v){
+				try {
+					mAccessTokenDailymotion = get_access_token();
+				} catch (Exception e) {
+					e.printStackTrace();
+				} catch (FacebookError e) {
+					e.printStackTrace();
+				}
+				Log.w("Dailymotion","access_token:"+ mAccessTokenDailymotion);
+				try {
+					String answer = http_get_access("https://api.dailymotion.com/me/videos?access_token="+mAccessTokenDailymotion);
+					Log.w("Dailymotion","answer to /me:"+ answer);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (FacebookError e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+       	    }
+       	});
+       	
         SessionStore.restore(mFacebook, this);
         SessionEvents.addAuthListener(new SampleAuthListener());
         SessionEvents.addLogoutListener(new SampleLogoutListener());
@@ -143,17 +182,43 @@ public class Main extends Activity implements SurfaceHolder.Callback{
         }
     }
     
+    public boolean openCamera() {
+    	if(getiCameraEnable())
+    	{
+	    	try{
+		   		mCamera = Camera.open(0);
+		   		if (mCamera != null){
+		   			Camera.Parameters params = mCamera.getParameters();
+		   			mCamera.setParameters(params);
+		   		}
+		   		else {
+		   			Toast.makeText(getApplicationContext(), "Camera not available!", Toast.LENGTH_LONG).show();
+		   			return false;
+		   		}
+	    	} catch (RuntimeException e) {
+	            Log.w("Camera", "Unable to open : "+ e.getMessage());
+	            mCamera = null;
+	            return false;
+	        }
+			return true;
+    	}else
+    		return false;
+    }
+    
+    public void closeCamera() {
+    	if(getiCameraEnable())
+    	{
+    		if (mCamera != null) {
+                mPreview.setCamera(null);
+                mCamera.release();
+                mCamera = null;
+            }
+    	}
+    }
+    
     @Override
    	public void surfaceCreated(SurfaceHolder holder) {
-   		mCamera = Camera.open(0);
-   		if (mCamera != null){
-   			Camera.Parameters params = mCamera.getParameters();
-   			mCamera.setParameters(params);
-   		}
-   		else {
-   			Toast.makeText(getApplicationContext(), "Camera not available!", Toast.LENGTH_LONG).show();
-   			finish();
-   		}
+    	openCamera();
    	}
 
     @Override
@@ -161,8 +226,8 @@ public class Main extends Activity implements SurfaceHolder.Callback{
         super.onResume();
 
         // Open the default i.e. the first rear facing camera.
-        mCamera = Camera.open(0);
-        mPreview.setCamera(mCamera);
+        if(openCamera())
+        	mPreview.setCamera(mCamera);
     }
 
     @Override
@@ -171,11 +236,7 @@ public class Main extends Activity implements SurfaceHolder.Callback{
 
         // Because the Camera object is a shared resource, it's very
         // important to release it when the activity is paused.
-        if (mCamera != null) {
-            mPreview.setCamera(null);
-            mCamera.release();
-            mCamera = null;
-        }
+        closeCamera();
     }
     
 	@Override
@@ -189,5 +250,106 @@ public class Main extends Activity implements SurfaceHolder.Callback{
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public boolean getiCameraEnable() {
+		return iCameraEnable;
+	}
+
+	public void setiCameraEnable(boolean iCameraEnable) {
+		this.iCameraEnable = iCameraEnable;
+	}
+	
+	public static String get_access_token() throws Exception, FacebookError {
+		String access_token="";
+		String body="grant_type=password&client_id="+Constants.DAILYMOTION_API_KEY+"&client_secret="+Constants.DAILYMOTION_SECRET_API_KEY+"&username="+Constants.DAILYMOTION_USER+"&password="+Constants.DAILYMOTION_PASSWORD;
+		URL login_url = new URL(Constants.DAILYMOTION_ACCESS_TOKEN_URL);
+        HttpURLConnection login_request = (HttpURLConnection) login_url.openConnection();
+        try {
+	        login_request.setRequestMethod("POST");
+	        login_request.setAllowUserInteraction(false); // you may not ask the user
+	        login_request.setDoInput(true);
+	        login_request.setDoOutput(true);
+	        login_request.setUseCaches(false);
+	     	// the Content-type should be default, but we set it anyway
+	        login_request.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+
+	        OutputStream out = new BufferedOutputStream(login_request.getOutputStream());
+	        out.write(body.getBytes());
+	        out.close();
+
+	        BufferedReader in = new BufferedReader(new InputStreamReader(login_request.getInputStream()));
+	        String response 	= "";
+	        String currentLine 	= "";
+	        while((currentLine = in.readLine()) != null)
+	        	response += currentLine + "\n";
+            JSONObject json = Util.parseJson(response);
+            access_token = json.getString("access_token");
+            //final String refresh_token = json.getString("refresh_token");
+	        in.close();
+        }finally {
+        	login_request.disconnect();
+        }
+        return access_token;
+	}
+	
+	public static String http_get_access(String url) throws Exception, FacebookError {
+        String response 	= "";
+		URL login_url = new URL(url);
+        HttpURLConnection login_request = (HttpURLConnection) login_url.openConnection();
+        try {
+	        login_request.setRequestMethod("GET");
+	        login_request.setAllowUserInteraction(false); // you may not ask the user
+	        login_request.setDoInput(true);
+	        login_request.setDoOutput(false);
+	        login_request.setUseCaches(false);
+
+	        BufferedReader in = new BufferedReader(new InputStreamReader(login_request.getInputStream()));
+	        String currentLine 	= "";
+	        while((currentLine = in.readLine()) != null)
+	        	response += currentLine + "\n";
+            /*
+	        JSONObject json = Util.parseJson(response);
+            final String access_token = json.getString("access_token");
+            final String refresh_token = json.getString("refresh_token");
+            */
+	        in.close();
+        }finally {
+        	login_request.disconnect();
+        }
+        return response;
+	}
+	
+	public static String http_post_access(String url,String body) throws Exception, FacebookError {
+        String response 	= "";
+		URL login_url = new URL(url);
+        HttpURLConnection login_request = (HttpURLConnection) login_url.openConnection();
+        try {
+	        login_request.setRequestMethod("POST");
+	        login_request.setAllowUserInteraction(false); // you may not ask the user
+	        login_request.setDoInput(true);
+	        login_request.setDoOutput(true);
+	        login_request.setUseCaches(false);
+	     	// the Content-type should be default, but we set it anyway
+	        login_request.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+
+	        OutputStream out = new BufferedOutputStream(login_request.getOutputStream());
+	        out.write(body.getBytes());
+	        out.close();
+
+	        BufferedReader in = new BufferedReader(new InputStreamReader(login_request.getInputStream()));
+	        String currentLine 	= "";
+	        while((currentLine = in.readLine()) != null)
+	        	response += currentLine + "\n";
+            /*
+	        JSONObject json = Util.parseJson(response);
+            final String access_token = json.getString("access_token");
+            final String refresh_token = json.getString("refresh_token");
+            */
+	        in.close();
+        }finally {
+        	login_request.disconnect();
+        }
+        return response;
 	}
 }

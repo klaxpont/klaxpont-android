@@ -20,6 +20,7 @@ import com.facebook.android.BaseRequestListener;
 import com.facebook.android.SessionEvents.AuthListener;
 import com.facebook.android.SessionEvents.LogoutListener;
 import com.facebook.android.Facebook.DialogListener;
+import com.klaxpont.android.R;
 
 import android.app.Activity;
 import android.content.Context;
