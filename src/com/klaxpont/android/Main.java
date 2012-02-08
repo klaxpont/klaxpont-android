@@ -50,6 +50,8 @@ import com.facebook.android.SessionEvents.LogoutListener;
 
 import com.klaxpont.android.Constants;
 
+import com.dailymotion.android.Dailymotion;
+
 public class Main extends Activity implements SurfaceHolder.Callback{
 
 	private Button mDailymotion;
@@ -89,20 +91,13 @@ public class Main extends Activity implements SurfaceHolder.Callback{
        		@Override
        	    public void onClick(View v){
 				try {
-					mAccessTokenDailymotion = get_access_token();
-				} catch (Exception e) {
-					e.printStackTrace();
-				} catch (FacebookError e) {
-					e.printStackTrace();
-				}
-				Log.w("Dailymotion","access_token:"+ mAccessTokenDailymotion);
-				try {
-					String answer = http_get_access("https://api.dailymotion.com/me/videos?access_token="+mAccessTokenDailymotion);
+					mAccessTokenDailymotion = Dailymotion.get_access_token();
+					Log.w("Dailymotion","access_token:"+ mAccessTokenDailymotion);
+					String answer = Dailymotion.http_get_access("https://api.dailymotion.com/me/videos?access_token="+mAccessTokenDailymotion);
 					Log.w("Dailymotion","answer to /me:"+ answer);
+					answer = Dailymotion.get_an_upload_url(mAccessTokenDailymotion);
+					Log.w("Dailymotion","upload URL:"+ answer);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (FacebookError e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -258,98 +253,5 @@ public class Main extends Activity implements SurfaceHolder.Callback{
 
 	public void setiCameraEnable(boolean iCameraEnable) {
 		this.iCameraEnable = iCameraEnable;
-	}
-	
-	public static String get_access_token() throws Exception, FacebookError {
-		String access_token="";
-		String body="grant_type=password&client_id="+Constants.DAILYMOTION_API_KEY+"&client_secret="+Constants.DAILYMOTION_SECRET_API_KEY+"&username="+Constants.DAILYMOTION_USER+"&password="+Constants.DAILYMOTION_PASSWORD;
-		URL login_url = new URL(Constants.DAILYMOTION_ACCESS_TOKEN_URL);
-        HttpURLConnection login_request = (HttpURLConnection) login_url.openConnection();
-        try {
-	        login_request.setRequestMethod("POST");
-	        login_request.setAllowUserInteraction(false); // you may not ask the user
-	        login_request.setDoInput(true);
-	        login_request.setDoOutput(true);
-	        login_request.setUseCaches(false);
-	     	// the Content-type should be default, but we set it anyway
-	        login_request.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
-
-	        OutputStream out = new BufferedOutputStream(login_request.getOutputStream());
-	        out.write(body.getBytes());
-	        out.close();
-
-	        BufferedReader in = new BufferedReader(new InputStreamReader(login_request.getInputStream()));
-	        String response 	= "";
-	        String currentLine 	= "";
-	        while((currentLine = in.readLine()) != null)
-	        	response += currentLine + "\n";
-            JSONObject json = Util.parseJson(response);
-            access_token = json.getString("access_token");
-            //final String refresh_token = json.getString("refresh_token");
-	        in.close();
-        }finally {
-        	login_request.disconnect();
-        }
-        return access_token;
-	}
-	
-	public static String http_get_access(String url) throws Exception, FacebookError {
-        String response 	= "";
-		URL login_url = new URL(url);
-        HttpURLConnection login_request = (HttpURLConnection) login_url.openConnection();
-        try {
-	        login_request.setRequestMethod("GET");
-	        login_request.setAllowUserInteraction(false); // you may not ask the user
-	        login_request.setDoInput(true);
-	        login_request.setDoOutput(false);
-	        login_request.setUseCaches(false);
-
-	        BufferedReader in = new BufferedReader(new InputStreamReader(login_request.getInputStream()));
-	        String currentLine 	= "";
-	        while((currentLine = in.readLine()) != null)
-	        	response += currentLine + "\n";
-            /*
-	        JSONObject json = Util.parseJson(response);
-            final String access_token = json.getString("access_token");
-            final String refresh_token = json.getString("refresh_token");
-            */
-	        in.close();
-        }finally {
-        	login_request.disconnect();
-        }
-        return response;
-	}
-	
-	public static String http_post_access(String url,String body) throws Exception, FacebookError {
-        String response 	= "";
-		URL login_url = new URL(url);
-        HttpURLConnection login_request = (HttpURLConnection) login_url.openConnection();
-        try {
-	        login_request.setRequestMethod("POST");
-	        login_request.setAllowUserInteraction(false); // you may not ask the user
-	        login_request.setDoInput(true);
-	        login_request.setDoOutput(true);
-	        login_request.setUseCaches(false);
-	     	// the Content-type should be default, but we set it anyway
-	        login_request.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
-
-	        OutputStream out = new BufferedOutputStream(login_request.getOutputStream());
-	        out.write(body.getBytes());
-	        out.close();
-
-	        BufferedReader in = new BufferedReader(new InputStreamReader(login_request.getInputStream()));
-	        String currentLine 	= "";
-	        while((currentLine = in.readLine()) != null)
-	        	response += currentLine + "\n";
-            /*
-	        JSONObject json = Util.parseJson(response);
-            final String access_token = json.getString("access_token");
-            final String refresh_token = json.getString("refresh_token");
-            */
-	        in.close();
-        }finally {
-        	login_request.disconnect();
-        }
-        return response;
 	}
 }
