@@ -16,12 +16,7 @@
 
 package com.klaxpont.android;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.File;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,13 +46,19 @@ import com.facebook.android.SessionEvents.LogoutListener;
 import com.klaxpont.android.Constants;
 
 import com.dailymotion.android.Dailymotion;
+import com.dailymotion.android.FilePickerActivity;
 
 public class Main extends Activity implements SurfaceHolder.Callback{
-
-	private Button mDailymotion;
-	private LoginButton mLoginButton;
-    private TextView mFacebookName;
-    private TextView mFacebookId;
+	
+	private static final int REQUEST_PICK_FILE = 1;
+	private File fSelectedFile;
+	private Button bFileSelect;
+	private TextView tFileSelected;
+	private TextView tVideoIdPublished;
+	private Button bSendFile;
+	private LoginButton bLoginButton;
+    private TextView tFacebookName;
+    private TextView tFacebookId;
     
     private Preview mPreview;
     private boolean iCameraEnable;
@@ -66,7 +67,8 @@ public class Main extends Activity implements SurfaceHolder.Callback{
     private Facebook mFacebook;
     private AsyncFacebookRunner mAsyncRunner;
     
-    private String mAccessTokenDailymotion="";
+    private String sAccessTokenDailymotion="";
+    private String sUploadLink="";
 
     /** Called when the activity is first created. */
     @Override
@@ -74,12 +76,16 @@ public class Main extends Activity implements SurfaceHolder.Callback{
         super.onCreate(savedInstanceState);
         
         setiCameraEnable(false);
+        //setiCameraEnable(true);
         
         setContentView(R.layout.main);
-        mDailymotion = (Button) findViewById(R.id.dailymotion_button);
-        mLoginButton = (LoginButton) findViewById(R.id.login);
-        mFacebookName = (TextView) Main.this.findViewById(R.id.txtname);
-        mFacebookId = (TextView) Main.this.findViewById(R.id.txtid);
+        tVideoIdPublished = (TextView) Main.this.findViewById(R.id.video_published_id);
+        bFileSelect = (Button) findViewById(R.id.select_file_button);
+        tFileSelected = (TextView) Main.this.findViewById(R.id.file_selected);
+        bSendFile = (Button) findViewById(R.id.send_file_button);
+        bLoginButton = (LoginButton) findViewById(R.id.login);
+        tFacebookName = (TextView) Main.this.findViewById(R.id.txtname);
+        tFacebookId = (TextView) Main.this.findViewById(R.id.txtid);
         
         mPreview = (Preview) Main.this.findViewById(R.id.preview_camera);
         mPreview.init(this);
@@ -87,27 +93,42 @@ public class Main extends Activity implements SurfaceHolder.Callback{
        	mFacebook = new Facebook(Constants.FACEBOOK_APP_ID);
        	mAsyncRunner = new AsyncFacebookRunner(mFacebook);
 
-       	mDailymotion.setOnClickListener(new View.OnClickListener() {
+       	bSendFile.setOnClickListener(new View.OnClickListener() {
        		@Override
        	    public void onClick(View v){
-				try {
-					mAccessTokenDailymotion = Dailymotion.get_access_token();
-					Log.w("Dailymotion","access_token:"+ mAccessTokenDailymotion);
-					String answer = Dailymotion.http_get_access("https://api.dailymotion.com/me/videos?access_token="+mAccessTokenDailymotion);
+       			try {
+       				sAccessTokenDailymotion = Dailymotion.get_access_token();
+					Log.w("Dailymotion","access_token:"+ sAccessTokenDailymotion);
+					String answer = Dailymotion.http_get_access("https://api.dailymotion.com/me/videos?access_token="+sAccessTokenDailymotion);
 					Log.w("Dailymotion","answer to /me:"+ answer);
-					answer = Dailymotion.get_an_upload_url(mAccessTokenDailymotion);
-					Log.w("Dailymotion","upload URL:"+ answer);
+					sUploadLink = Dailymotion.get_an_upload_url(sAccessTokenDailymotion);
+					Log.w("Dailymotion","upload URL:"+ sUploadLink);
+					String url = Dailymotion.upload_file(fSelectedFile, sUploadLink);
+					Log.w("Dailymotion","get the real url:"+url);
+					answer = Dailymotion.http_post_access(
+							"https://api.dailymotion.com/me/videos?access_token="+sAccessTokenDailymotion,
+							"url="+url+"&title=klaxpontTest&channel=fun&tags=1&published=true");
+					Log.w("Dailymotion","video id:"+answer);
+					tVideoIdPublished.setText("Published Video ID:"+answer);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-       	    }
+       		}
+       	});
+       	
+       	bFileSelect.setOnClickListener(new View.OnClickListener() {
+       		@Override
+       	    public void onClick(View v){
+       			Intent intent = new Intent(Main.this, FilePickerActivity.class);
+       			startActivityForResult(intent, REQUEST_PICK_FILE);
+       		}
        	});
        	
         SessionStore.restore(mFacebook, this);
         SessionEvents.addAuthListener(new SampleAuthListener());
         SessionEvents.addLogoutListener(new SampleLogoutListener());
-        mLoginButton.init(this, mFacebook);
+        bLoginButton.init(this, mFacebook);
         if (mFacebook.isSessionValid())
         	mAsyncRunner.request("me", new SampleRequestListener());
     }
@@ -115,34 +136,50 @@ public class Main extends Activity implements SurfaceHolder.Callback{
     @Override
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
-        mFacebook.authorizeCallback(requestCode, resultCode, data);
+	    switch(requestCode) {
+        case REQUEST_PICK_FILE:
+        	if(resultCode == RESULT_OK) {
+        		if(data.hasExtra(FilePickerActivity.EXTRA_FILE_PATH)) {
+                // Get the file path
+            	fSelectedFile = new File(data.getStringExtra(FilePickerActivity.EXTRA_FILE_PATH));
+                // Set the file path text view
+                tFileSelected.setText(fSelectedFile.getPath());
+                //Now you have your selected file, You can do your additional requirement with file.
+        		}
+            }
+        	return;
+		default :
+            
+            break;
+        }
+    	mFacebook.authorizeCallback(requestCode, resultCode, data);
     }
 
     public class SampleAuthListener implements AuthListener {
 
         @Override
 		public void onAuthSucceed() {
-            mFacebookName.setText("You have logged in! ");
+            tFacebookName.setText("You have logged in! ");
             //asking the facebook login...
             mAsyncRunner.request("me", new SampleRequestListener());
         }
 
         @Override
 		public void onAuthFail(String error) {
-            mFacebookName.setText("Login Failed: " + error);
+            tFacebookName.setText("Login Failed: " + error);
         }
     }
 
     public class SampleLogoutListener implements LogoutListener {
         @Override
 		public void onLogoutBegin() {
-            mFacebookName.setText("Logging out...");
-            mFacebookId.setVisibility(View.INVISIBLE);
+            tFacebookName.setText("Logging out...");
+            tFacebookId.setVisibility(View.INVISIBLE);
         }
 
         @Override
 		public void onLogoutFinish() {
-            mFacebookName.setText("You have logged out! ");
+            tFacebookName.setText("You have logged out! ");
         }
     }
 
@@ -164,9 +201,9 @@ public class Main extends Activity implements SurfaceHolder.Callback{
                 Main.this.runOnUiThread(new Runnable() {
                     @Override
 					public void run() {
-                        mFacebookName.setText("name:" + name);
-                        mFacebookId.setVisibility(View.VISIBLE);
-                        mFacebookId.setText("id:" + id);
+                        tFacebookName.setText("name:" + name);
+                        tFacebookId.setVisibility(View.VISIBLE);
+                        tFacebookId.setText("id:" + id);
                     }
                 });
             } catch (JSONException e) {

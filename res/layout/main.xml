@@ -3,13 +3,33 @@
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="fill_parent" android:background="@drawable/white"
 	android:gravity="center_horizontal">
-
+    
     <Button
-        android:id="@+id/dailymotion_button"
+        android:id="@+id/select_file_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Dailymotion" />
-
+        android:text="SelectFile" />
+    
+	<TextView android:id="@+id/file_selected" 
+        android:text="No file yet"
+        android:textColor="@drawable/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		/>
+	
+    <Button
+        android:id="@+id/send_file_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SendFileOnDailymotion" />
+    
+    <TextView android:id="@+id/video_published_id" 
+        android:text="Video not published yet"
+        android:textColor="@drawable/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		/>
+    
     <com.facebook.android.LoginButton
         android:id="@+id/login"
         android:src="@drawable/login_button"
