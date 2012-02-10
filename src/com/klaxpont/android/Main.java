@@ -67,8 +67,8 @@ public class Main extends Activity implements SurfaceHolder.Callback{
     private Facebook mFacebook;
     private AsyncFacebookRunner mAsyncRunner;
     
-    private String sAccessTokenDailymotion="";
-    private String sUploadLink="";
+    //private String sAccessTokenDailymotion="";
+    private String sVideoId="";
 
     /** Called when the activity is first created. */
     @Override
@@ -97,19 +97,27 @@ public class Main extends Activity implements SurfaceHolder.Callback{
        		@Override
        	    public void onClick(View v){
        			try {
-       				sAccessTokenDailymotion = Dailymotion.get_access_token();
-					Log.w("Dailymotion","access_token:"+ sAccessTokenDailymotion);
-					String answer = Dailymotion.http_get_access("https://api.dailymotion.com/me/videos?access_token="+sAccessTokenDailymotion);
-					Log.w("Dailymotion","answer to /me:"+ answer);
-					sUploadLink = Dailymotion.get_an_upload_url(sAccessTokenDailymotion);
-					Log.w("Dailymotion","upload URL:"+ sUploadLink);
-					String url = Dailymotion.upload_file(fSelectedFile, sUploadLink);
-					Log.w("Dailymotion","get the real url:"+url);
-					answer = Dailymotion.http_post_access(
-							"https://api.dailymotion.com/me/videos?access_token="+sAccessTokenDailymotion,
-							"url="+url+"&title=klaxpontTest&channel=fun&tags=1&published=true");
-					Log.w("Dailymotion","video id:"+answer);
-					tVideoIdPublished.setText("Published Video ID:"+answer);
+       				if(!Dailymotion.isSessionValid()) {
+       					if(Dailymotion.login(
+       							Constants.DAILYMOTION_API_KEY,
+       							Constants.DAILYMOTION_SECRET_API_KEY,
+	       						Constants.DAILYMOTION_USER,
+	       						Constants.DAILYMOTION_PASSWORD)) {
+       						Log.i("Dailymotion","Login");
+       					}else{
+       						Log.w("Dailymotion","Unable to login, verify tour credential");
+       						return;
+       					}
+       					
+       				}       				
+       				//TODO
+       				sVideoId=Dailymotion.publish_a_video(
+							fSelectedFile,
+							"klaxpontTest",
+							"fun",
+							"klaxpont,cripont,cri,klaxon,pont,connards",
+							"true");
+					tVideoIdPublished.setText("Published Video ID:"+sVideoId);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -124,8 +132,7 @@ public class Main extends Activity implements SurfaceHolder.Callback{
        			startActivityForResult(intent, REQUEST_PICK_FILE);
        		}
        	});
-       	
-        SessionStore.restore(mFacebook, this);
+       	SessionStore.restore(mFacebook, this);
         SessionEvents.addAuthListener(new SampleAuthListener());
         SessionEvents.addLogoutListener(new SampleLogoutListener());
         bLoginButton.init(this, mFacebook);

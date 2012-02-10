@@ -10,35 +10,151 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
-
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
 
-import com.klaxpont.android.Constants;
-
 public final class Dailymotion {
 	
-	public static String get_access_token() throws Exception {
-		String access_token="";
-		String answer="";
-		String body="grant_type=password&client_id="+Constants.DAILYMOTION_API_KEY+"&client_secret="+Constants.DAILYMOTION_SECRET_API_KEY+"&username="+Constants.DAILYMOTION_USER+"&password="+Constants.DAILYMOTION_PASSWORD+"&scope=write+read+delete+manage_videos";
-		answer=http_post_access(Constants.DAILYMOTION_ACCESS_TOKEN_URL, body);
-            JSONObject json = new JSONObject(answer);
-            access_token = json.getString("access_token");
-        return access_token;
+	private static JSONObject json_token;
+	
+	public static boolean set_access_token(String access_token) {
+		return set_data_in_json_token("access_token",access_token);
+	}
+	/* Not really useful...
+	public static boolean set_refresh_token(String refresh_token) {
+		return set_data_in_json_token("refresh_token",refresh_token);
+	}
+	*/
+	
+	private static boolean set_data_in_json_token(String key,String value) {
+		JSONObject json = getJson_token();
+		if(json==null)
+			json = new JSONObject();
+		try {
+			json.put(key,value);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		setJson_token(json);
+		return true;
 	}
 	
-	public static String get_an_upload_url(String access_token) throws Exception {
-		String upload_url="";
+	public static boolean relogin() {
+		JSONObject json = getJson_token();
+		if(json==null)
+			return false;
+		try {
+			return login(json.getString("api_key"),json.getString("api_secret_key"),json.getString("user"),json.getString("password"));
+		} catch (JSONException e) {
+			Log.w("Dailymotion","Missing data to relogin...");
+			return false;
+		}
+	}
+	
+	public static boolean login(String api_key,String api_secret_key,String user,String password) {
+		String answer="";
+		String body="grant_type=password&client_id="+api_key+"&client_secret="+api_secret_key+"&username="+user+"&password="+password+"&scope=write+read+delete";
+		answer=http_post_access("https://api.dailymotion.com/oauth/token", body);
+		if(answer==null){
+			Log.e("Dailymotion","Unable to login");
+			return false;
+		}
+		Log.d("Dailymotion","login:"+answer);
+		try {
+			setJson_token(new JSONObject(answer));
+		} catch (JSONException e) {
+			e.printStackTrace();
+			Log.d("Dailymotion","Probably invalid credentials");
+			return false;
+		}
+		set_data_in_json_token("api_key",api_key);
+		set_data_in_json_token("api_secret_key",api_secret_key);
+		set_data_in_json_token("user",user);
+		set_data_in_json_token("password",password);
+        return true;
+	}
+	
+	public static void logout() {
+		JSONObject json = getJson_token();
+		if(json==null){
+			Log.w("Dailymotion","You were not authenticate...");
+			return;
+		}
+		try {
+			String answer = http_get_access("https://api.dailymotion.com/logout?access_token="+json.getString("access_token"));
+			Log.d("Dailymotion","logout:"+answer);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		setJson_token(null);
+	}
+	
+	public static boolean isSessionValid() {
+		JSONObject json = getJson_token();
+		if(json==null){
+			Log.w("Dailymotion","You were not logged in...");
+			return false;
+		}
+		try {
+			String answer = http_get_access("https://api.dailymotion.com/videos?access_token="+json.getString("access_token"));
+			if(answer!=null)
+				Log.d("Dailymotion","check authentication:"+answer);
+			else
+				return false;
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	public static String publish_a_video(File f,String title,String channel,String tag,String published) {
+		String videoId="";
+		String temp="";
+		JSONObject json = getJson_token();
+		if(f==null) {
+			Log.w("Dailymotion","No file to upload specified");
+			return null;
+		}			
+		if(!isSessionValid())
+			return null;
+		try {
+			String sUploadLink = get_an_upload_url(json.getString("access_token"));
+			Log.w("Dailymotion","upload URL:"+ sUploadLink);
+			String url = upload_file(f, sUploadLink);
+			Log.w("Dailymotion","get the real url:"+url);
+			temp = http_post_access(
+					"https://api.dailymotion.com/me/videos?access_token="+json.getString("access_token"),
+					"url="+url+"&title="+title+"&channel="+channel+"&tags="+tag+"&published="+published);
+			Log.w("Dailymotion","video id:"+temp);
+			JSONObject json_answer = new JSONObject(temp);
+			videoId = json_answer.getString("id");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return videoId;
+	}
+	
+	private static String get_an_upload_url(String access_token) {
+		String upload_url=null;
 		String answer = http_get_access("https://api.dailymotion.com/file/upload?access_token="+access_token);
-		JSONObject json = new JSONObject(answer);
-        upload_url = json.getString("upload_url");
+        try {
+    		JSONObject json = new JSONObject(answer);
+			upload_url = json.getString("upload_url");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 		return upload_url;
 	}
 	
-	public static String upload_file(File f,String upload_uri) throws Exception {
+	private static String upload_file(File f,String upload_uri) {
 		HttpURLConnection conn = null;
 		DataOutputStream dos = null;
 		String lineEnd = "\r\n";
@@ -111,38 +227,51 @@ public final class Dailymotion {
 		}
 		catch (IOException ioex){
 			Log.e("Debug", "error: " + ioex.getMessage(), ioex);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
         return real_upload_url;
 	}
 	
-	public static String http_get_access(String url) throws Exception {
-        String response 	= "";
-		URL login_url = new URL(url);
-        HttpURLConnection login_request = (HttpURLConnection) login_url.openConnection();
+	private static String http_get_access(String url){
+        String response=null;
+        HttpURLConnection login_request=null;
         try {
+        	URL login_url = new URL(url);
+        	login_request = (HttpURLConnection) login_url.openConnection();
 	        login_request.setRequestMethod("GET");
 	        login_request.setAllowUserInteraction(false); // you may not ask the user
 	        login_request.setDoInput(true);
 	        login_request.setDoOutput(false);
 	        login_request.setUseCaches(false);
-
 	        BufferedReader in = new BufferedReader(new InputStreamReader(login_request.getInputStream()));
+	        response = "";
 	        String currentLine 	= "";
 	        while((currentLine = in.readLine()) != null)
 	        	response += currentLine + "\n";
 	        in.close();
-        }finally {
-        	login_request.disconnect();
+        } catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (ProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			Log.w("Dailymotion","Probably not logged in");
+			Log.d("Dailymotion","http_get:"+e.toString());
+		}finally {
+        	if(login_request!=null)
+        		login_request.disconnect();
         }
         return response;
 	}
 	
-	public static String http_post_access(String url,String body) throws Exception {
-        String response 	= "";
-		Log.w("Dailymotion","http_post url:"+url+",body:"+body);
-		URL login_url = new URL(url);
-        HttpURLConnection login_request = (HttpURLConnection) login_url.openConnection();
+	private static String http_post_access(String url,String body){
+        String response=null;
+        HttpURLConnection login_request=null;
+		Log.d("Dailymotion","http_post used url:"+url+",body:"+body);
         try {
+        	URL login_url = new URL(url);
+        	login_request = (HttpURLConnection) login_url.openConnection();
 	        login_request.setRequestMethod("POST");
 	        login_request.setAllowUserInteraction(false); // you may not ask the user
 	        login_request.setDoInput(true);
@@ -157,12 +286,31 @@ public final class Dailymotion {
 
 	        BufferedReader in = new BufferedReader(new InputStreamReader(login_request.getInputStream()));
 	        String currentLine 	= "";
+	        response="";
 	        while((currentLine = in.readLine()) != null)
 	        	response += currentLine + "\n";
 	        in.close();
-        }finally {
-        	login_request.disconnect();
+        } catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			if(login_request!=null)
+				login_request.disconnect();
         }
         return response;
+	}
+
+	public static JSONObject getJson_token() {
+		return json_token;
+	}
+
+	public static void setJson_token(JSONObject json_token) {
+		Dailymotion.json_token = json_token;
 	}
 }
