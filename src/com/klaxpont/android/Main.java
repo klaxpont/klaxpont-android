@@ -45,6 +45,7 @@ import com.facebook.android.SessionEvents.LogoutListener;
 
 import com.klaxpont.android.Constants;
 
+import com.appliweb.android.AppliWeb;
 import com.dailymotion.android.Dailymotion;
 import com.dailymotion.android.FilePickerActivity;
 
@@ -93,11 +94,15 @@ public class Main extends Activity implements SurfaceHolder.Callback{
        	mFacebook = new Facebook(Constants.FACEBOOK_APP_ID);
        	mAsyncRunner = new AsyncFacebookRunner(mFacebook);
 
+       	String dailymotion_access_token = AppliWeb.getDailymotionAccessToken();
+       	Log.i("Main","access_token:"+dailymotion_access_token);
+       	
        	bSendFile.setOnClickListener(new View.OnClickListener() {
        		@Override
        	    public void onClick(View v){
        			try {
        				if(!Dailymotion.isSessionValid()) {
+/* login dailymotion direct       					
        					if(Dailymotion.login(
        							Constants.DAILYMOTION_API_KEY,
        							Constants.DAILYMOTION_SECRET_API_KEY,
@@ -108,9 +113,19 @@ public class Main extends Activity implements SurfaceHolder.Callback{
        						Log.w("Dailymotion","Unable to login, verify tour credential");
        						return;
        					}
-       					
-       				}       				
-       				//TODO
+       				}
+*/       					
+       					String dailymotion_access_token = AppliWeb.getDailymotionAccessToken();
+       					Dailymotion.set_access_token(dailymotion_access_token);
+       					if(Dailymotion.isSessionValid())
+	       				{
+       						Log.i("Dailymotion","Login");
+       					}else{
+       						Log.w("Dailymotion","Unable to login, verify your credential");
+       						return;
+       					}
+       				}			
+/*       				
        				sVideoId=Dailymotion.publish_a_video(
 							fSelectedFile,
 							"klaxpontTest",
@@ -118,6 +133,7 @@ public class Main extends Activity implements SurfaceHolder.Callback{
 							"klaxpont,cripont,cri,klaxon,pont,connards",
 							"true");
 					tVideoIdPublished.setText("Published Video ID:"+sVideoId);
+*/
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
