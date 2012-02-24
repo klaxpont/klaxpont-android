@@ -50,8 +50,11 @@ import com.dailymotion.android.Dailymotion;
 import com.dailymotion.android.FilePickerActivity;
 
 public class Main extends Activity implements SurfaceHolder.Callback{
-	
+
 	private static final int REQUEST_PICK_FILE = 1;
+	private static final int REQUEST_MAPS = 2;
+
+	private Button bMaps;
 	private File fSelectedFile;
 	private Button bFileSelect;
 	private TextView tFileSelected;
@@ -80,6 +83,7 @@ public class Main extends Activity implements SurfaceHolder.Callback{
         //setiCameraEnable(true);
         
         setContentView(R.layout.main);
+        bMaps = (Button) findViewById(R.id.maps_button);
         tVideoIdPublished = (TextView) Main.this.findViewById(R.id.video_published_id);
         bFileSelect = (Button) findViewById(R.id.select_file_button);
         tFileSelected = (TextView) Main.this.findViewById(R.id.file_selected);
@@ -96,6 +100,14 @@ public class Main extends Activity implements SurfaceHolder.Callback{
 
        	String dailymotion_access_token = AppliWeb.getDailymotionAccessToken();
        	Log.i("Main","access_token:"+dailymotion_access_token);
+       	       	
+       	bMaps.setOnClickListener(new View.OnClickListener() {
+       		@Override
+       	    public void onClick(View v){
+       			Intent intent = new Intent(Main.this, Maps.class);
+       	       	startActivityForResult(intent, REQUEST_PICK_FILE);
+       		}
+       	});
        	
        	bSendFile.setOnClickListener(new View.OnClickListener() {
        		@Override
@@ -171,6 +183,7 @@ public class Main extends Activity implements SurfaceHolder.Callback{
         		}
             }
         	return;
+        case REQUEST_MAPS:
 		default :
             
             break;
