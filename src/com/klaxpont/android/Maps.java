@@ -45,15 +45,17 @@ public class Maps extends MapActivity implements LocationListener {
 	   lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, this);
 	   
 	   List<Overlay> mapOverlays = mapView.getOverlays();
-	   Drawable drawable = this.getResources().getDrawable(R.drawable.marker);
+	   Drawable drawable = this.getResources().getDrawable(R.drawable.small_marker);
 	   mItems = new MapsItems(drawable, this);
 	   GeoPoint point = new GeoPoint(19240000,-99120000);
-	   OverlayItem overlayitem = new OverlayItem(point, "Hola, Mundo!", "I'm in Mexico City!");
+	   OverlayItem overlayitem = new OverlayItem(point, "Mexico city", "I'm in Mexico City!");
 	   GeoPoint point2 = new GeoPoint(35410000, 139460000);
-	   OverlayItem overlayitem2 = new OverlayItem(point2, "Sekai, konichiwa!", "I'm in Japan!");
+	   OverlayItem overlayitem2 = new OverlayItem(point2, "Sekai", "konichiwa!");
+	   GeoPoint BouinuxPoint = new GeoPoint(47455719, -00545025);
+	   OverlayItem overlayitem3 = new OverlayItem(BouinuxPoint, "Bouinux", "Welcome Home!");
 	   mItems.addOverlay(overlayitem);
-	   mapOverlays.add(mItems);
 	   mItems.addOverlay(overlayitem2);
+	   mItems.addOverlay(overlayitem3);
 	   mapOverlays.add(mItems);
 	 }
 	
@@ -74,7 +76,6 @@ public class Maps extends MapActivity implements LocationListener {
 		return super.onKeyDown(keyCode, event);
 	}
 
-	@Override
 	public void onLocationChanged(Location location) {
 		lat = location.getLatitude();
 		lng = location.getLongitude();
@@ -86,18 +87,15 @@ public class Maps extends MapActivity implements LocationListener {
 		mc.setCenter(p);
 	}
 
-	@Override
 	public void onProviderDisabled(String provider) {
 		// TODO Auto-generated method stub
 	}
 
-	@Override
 	public void onProviderEnabled(String provider) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 		// TODO Auto-generated method stub
 		

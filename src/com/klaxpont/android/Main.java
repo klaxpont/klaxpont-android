@@ -17,6 +17,7 @@
 package com.klaxpont.android;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,6 +49,7 @@ import com.klaxpont.android.Constants;
 import com.appliweb.android.AppliWeb;
 import com.dailymotion.android.Dailymotion;
 import com.dailymotion.android.FilePickerActivity;
+import com.dailymotion.android.Video;
 
 public class Main extends Activity implements SurfaceHolder.Callback{
 
@@ -99,22 +101,27 @@ public class Main extends Activity implements SurfaceHolder.Callback{
        	mAsyncRunner = new AsyncFacebookRunner(mFacebook);
 
        	String dailymotion_access_token = AppliWeb.getDailymotionAccessToken();
-       	Log.i("Main","access_token:"+dailymotion_access_token);
+       	Dailymotion.set_access_token(dailymotion_access_token);
+       	ArrayList<Video> listvideo = Dailymotion.getListofMostViewVideoFromUser(Dailymotion.getMyUserId());
+       	//ArrayList<Video> listvideo = Dailymotion.getListofMostViewVideoFromUser("x4r137");//remy gaillard
+       	
+       	Log.i("Klaxpont","Video must viewed from klaxpont :"+listvideo.size());
+       	if(listvideo!=null)
+       		for(int i=0; i < listvideo.size();i++)
+       			listvideo.get(i).print();
        	       	
        	bMaps.setOnClickListener(new View.OnClickListener() {
-       		@Override
-       	    public void onClick(View v){
+       		public void onClick(View v){
        			Intent intent = new Intent(Main.this, Maps.class);
        	       	startActivityForResult(intent, REQUEST_PICK_FILE);
        		}
        	});
        	
        	bSendFile.setOnClickListener(new View.OnClickListener() {
-       		@Override
-       	    public void onClick(View v){
+       		public void onClick(View v){
        			try {
        				if(!Dailymotion.isSessionValid()) {
-/* login dailymotion direct       					
+/*						//login dailymotion direct       					
        					if(Dailymotion.login(
        							Constants.DAILYMOTION_API_KEY,
        							Constants.DAILYMOTION_SECRET_API_KEY,
@@ -154,8 +161,7 @@ public class Main extends Activity implements SurfaceHolder.Callback{
        	});
        	
        	bFileSelect.setOnClickListener(new View.OnClickListener() {
-       		@Override
-       	    public void onClick(View v){
+       		public void onClick(View v){
        			Intent intent = new Intent(Main.this, FilePickerActivity.class);
        			startActivityForResult(intent, REQUEST_PICK_FILE);
        		}
@@ -193,36 +199,31 @@ public class Main extends Activity implements SurfaceHolder.Callback{
 
     public class SampleAuthListener implements AuthListener {
 
-        @Override
-		public void onAuthSucceed() {
+        public void onAuthSucceed() {
             tFacebookName.setText("You have logged in! ");
             //asking the facebook login...
             mAsyncRunner.request("me", new SampleRequestListener());
         }
 
-        @Override
-		public void onAuthFail(String error) {
+        public void onAuthFail(String error) {
             tFacebookName.setText("Login Failed: " + error);
         }
     }
 
     public class SampleLogoutListener implements LogoutListener {
-        @Override
-		public void onLogoutBegin() {
+        public void onLogoutBegin() {
             tFacebookName.setText("Logging out...");
             tFacebookId.setVisibility(View.INVISIBLE);
         }
 
-        @Override
-		public void onLogoutFinish() {
+        public void onLogoutFinish() {
             tFacebookName.setText("You have logged out! ");
         }
     }
 
     public class SampleRequestListener extends BaseRequestListener {
 
-        @Override
-		public void onComplete(final String response, final Object state) {
+        public void onComplete(final String response, final Object state) {
             try {
                 // process the response here: executed in background thread
                 Log.d("Facebook-Main", "Response: " + response.toString());
@@ -235,8 +236,7 @@ public class Main extends Activity implements SurfaceHolder.Callback{
                 // e.g. "CalledFromWrongThreadException: Only the original
                 // thread that created a view hierarchy can touch its views."
                 Main.this.runOnUiThread(new Runnable() {
-                    @Override
-					public void run() {
+                    public void run() {
                         tFacebookName.setText("name:" + name);
                         tFacebookId.setVisibility(View.VISIBLE);
                         tFacebookId.setText("id:" + id);
@@ -284,8 +284,7 @@ public class Main extends Activity implements SurfaceHolder.Callback{
     	}
     }
     
-    @Override
-   	public void surfaceCreated(SurfaceHolder holder) {
+    public void surfaceCreated(SurfaceHolder holder) {
     	openCamera();
    	}
 
@@ -307,14 +306,12 @@ public class Main extends Activity implements SurfaceHolder.Callback{
         closeCamera();
     }
     
-	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 			int height) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		// TODO Auto-generated method stub
 		

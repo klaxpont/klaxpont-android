@@ -12,6 +12,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.ArrayList;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -110,6 +113,31 @@ public final class Dailymotion {
 			return false;
 		}
 		return true;
+	}
+	
+	public static String getMyUserId() {
+		String returned=null;
+		JSONObject json = getJson_token();
+		if(json==null){
+			Log.w("Dailymotion","You were not logged in...");
+			return returned;
+		}
+		try {
+			String answer = http_get_access("https://api.dailymotion.com/me/videos?access_token="+json.getString("access_token"));
+			if(answer!=null){
+				JSONObject json_answer = new JSONObject(answer);
+				returned = json_answer.getString("owner");
+				if(returned !=null){
+					Log.d("Dailymotion","MyUserId:"+returned);
+				}
+			}
+			else
+				return returned;
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return returned;
+		}
+		return returned;
 	}
 	
 	public static String publish_a_video(File f,String title,String channel,String tag,String published) {
@@ -312,5 +340,47 @@ public final class Dailymotion {
 
 	public static void setJson_token(JSONObject json_token) {
 		Dailymotion.json_token = json_token;
+	}
+	
+	public static ArrayList<Video> getListofMostViewVideoFromUser(String user)
+	{
+		return getListOfVideosWithParameters("user="+user+"&sort=visited-month");
+	}
+	private static ArrayList<Video> getListOfVideosWithParameters(String parameters) {
+
+		ArrayList<Video> videoList = new ArrayList<Video>();
+		boolean has_more=true;
+		int page = 1;
+		while(has_more){
+			String answer = http_get_access("https://api.dailymotion.com/videos&page="+page+"&limit=10&fields=id,title,status,rating&"+parameters);
+			has_more = parseListOfVideosWithParametersAndAddToArray(answer,parameters,videoList);
+			page++;
+		}
+		return videoList;
+	}	
+	private static boolean parseListOfVideosWithParametersAndAddToArray(String answer,String parameters,ArrayList<Video> videoList) {
+		boolean returned=false;
+		int index=0;
+		if(answer==null)
+			return returned;
+		try {
+    		JSONObject json = new JSONObject(answer);
+    		returned = (json.getString("has_more").compareTo("false")!=0);
+			JSONArray jsonvideolist = json.getJSONArray("list");
+			Log.i("Dailymotion","videolist:"+jsonvideolist);
+			while(!jsonvideolist.isNull(index)){
+				videoList.add(new Video(
+						jsonvideolist.getJSONObject(index).getString("id"),
+						jsonvideolist.getJSONObject(index).getString("title"),
+						jsonvideolist.getJSONObject(index).getInt("rating"),
+						(jsonvideolist.getJSONObject(index).getString("status").compareTo("published")==0)
+						));
+				index++;
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return returned;
 	}
 }

@@ -12,7 +12,7 @@
 		 android:layout_height="fill_parent"
 		 android:enabled="true"
 		 android:clickable="true"
-		 android:apiKey="@string/mapKey"
+		 android:apiKey="@string/mapKeyOrdiNadege"
 		 />
 	<LinearLayout android:id="@+id/zoom"
 	android:layout_width="wrap_content"
