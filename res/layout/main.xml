@@ -14,7 +14,7 @@
         android:id="@+id/select_file_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SelectFile" />
+        android:text="SelectFileToUpload" />
     
 	<TextView android:id="@+id/file_selected" 
         android:text="No file yet"

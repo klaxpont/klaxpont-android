@@ -119,20 +119,17 @@ public final class Dailymotion {
 		String returned=null;
 		JSONObject json = getJson_token();
 		if(json==null){
-			Log.w("Dailymotion","You were not logged in...");
+			Log.w("Dailymotion","You were not logged in to get the UserId...");
 			return returned;
 		}
 		try {
-			String answer = http_get_access("https://api.dailymotion.com/me/videos?access_token="+json.getString("access_token"));
-			if(answer!=null){
-				JSONObject json_answer = new JSONObject(answer);
-				returned = json_answer.getString("owner");
-				if(returned !=null){
-					Log.d("Dailymotion","MyUserId:"+returned);
-				}
+			returned = json.getString("uid");
+			if(returned !=null){
+				Log.d("Dailymotion","MyUserId:"+returned);
 			}
-			else
+			else{
 				return returned;
+			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 			return returned;
@@ -367,7 +364,6 @@ public final class Dailymotion {
     		JSONObject json = new JSONObject(answer);
     		returned = (json.getString("has_more").compareTo("false")!=0);
 			JSONArray jsonvideolist = json.getJSONArray("list");
-			Log.i("Dailymotion","videolist:"+jsonvideolist);
 			while(!jsonvideolist.isNull(index)){
 				videoList.add(new Video(
 						jsonvideolist.getJSONObject(index).getString("id"),

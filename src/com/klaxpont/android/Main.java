@@ -100,8 +100,10 @@ public class Main extends Activity implements SurfaceHolder.Callback{
        	mFacebook = new Facebook(Constants.FACEBOOK_APP_ID);
        	mAsyncRunner = new AsyncFacebookRunner(mFacebook);
 
-       	String dailymotion_access_token = AppliWeb.getDailymotionAccessToken();
-       	Dailymotion.set_access_token(dailymotion_access_token);
+       	//String dailymotion_access_token = AppliWeb.getDailymotionAccessToken();
+       	//Dailymotion.set_access_token(dailymotion_access_token);
+       	AppliWeb.getDailymotionAccessToken();
+       	Dailymotion.setJson_token(AppliWeb.getJson_dailymotion_token());
        	ArrayList<Video> listvideo = Dailymotion.getListofMostViewVideoFromUser(Dailymotion.getMyUserId());
        	//ArrayList<Video> listvideo = Dailymotion.getListofMostViewVideoFromUser("x4r137");//remy gaillard
        	
