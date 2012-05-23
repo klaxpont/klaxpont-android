@@ -22,20 +22,17 @@ public class RecordAVideo extends Activity {
 		bButtonRecord = (ImageButton) findViewById(R.id.buttonRecord);
 		bButtonHorn = (ImageButton) findViewById(R.id.buttonHorn);
 		bButtonRecord.setOnClickListener(new View.OnClickListener() {
-       		@Override
-       	    public void onClick(View v){
+       		public void onClick(View v){
        			//TODO
        		}
        	});
 		bButtonHorn.setOnClickListener(new View.OnClickListener() {			
-       		@Override
-       	    public void onClick(View v){
+       		public void onClick(View v){
        			//TODO
        			MediaPlayer mp = MediaPlayer.create(RecordAVideo.this, R.raw.boathorn);   
                 mp.start();
                 mp.setOnCompletionListener(new OnCompletionListener() {
 
-					@Override
 					public void onCompletion(MediaPlayer mp) {
 						// TODO Auto-generated method stub
 		                mp.release();						

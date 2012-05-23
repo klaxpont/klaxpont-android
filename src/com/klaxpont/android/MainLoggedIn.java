@@ -28,15 +28,13 @@ public class MainLoggedIn extends Activity {
 		
 		recordAVideo = (Button) this.findViewById(R.id.recordAVideo);
 		recordAVideo.setOnClickListener(new View.OnClickListener() {
-       		@Override
-       	    public void onClick(View v){
+       		public void onClick(View v){
        	       	startActivity(new Intent(MainLoggedIn.this, RecordAVideo.class));
        		}
        	});
 		uploadAVideo = (Button) this.findViewById(R.id.uploadAVideo);
 		uploadAVideo.setOnClickListener(new View.OnClickListener() {
-       		@Override
-       	    public void onClick(View v){
+       		public void onClick(View v){
        	       	startActivity(new Intent(MainLoggedIn.this, UploadAVideo.class));
        		}
        	});

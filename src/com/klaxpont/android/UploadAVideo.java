@@ -28,8 +28,7 @@ public class UploadAVideo extends Activity {
 		setContentView(R.layout.uploadavideo);
 		bSelectUploadVideo = (Button) findViewById(R.id.selectUploadVideo);
 		bSelectUploadVideo.setOnClickListener(new View.OnClickListener() {
-       		@Override
-       	    public void onClick(View v){
+       		public void onClick(View v){
        			Intent intent = new Intent(UploadAVideo.this, FilePickerActivity.class);
        			startActivityForResult(intent, REQUEST_PICK_FILE);
        		}

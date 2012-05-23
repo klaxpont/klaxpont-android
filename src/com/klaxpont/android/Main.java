@@ -56,8 +56,7 @@ public class Main extends Activity {
 	        	mAsyncRunner.request("me", new FacebookRequestListener());
 		   
 		   bVisitButton.setOnClickListener(new View.OnClickListener() {
-	       		@Override
-	       	    public void onClick(View v){
+	       		public void onClick(View v){
 	       			Log.i("Main","Launching VisitButton");
 	       			Intent intent = new Intent(Main.this, OldMainLoggedIn.class);
 	       			startActivity(intent);
@@ -67,8 +66,7 @@ public class Main extends Activity {
 	
 	}
 	public class FacebookRequestListener extends BaseRequestListener {
-	    @Override
-		public void onComplete(final String response, final Object state) {
+	    public void onComplete(final String response, final Object state) {
 	        try {
 	            // process the response here: executed in background thread
 	            Log.d("Facebook-Main", "Response: " + response.toString());
@@ -81,8 +79,7 @@ public class Main extends Activity {
 	            // e.g. "CalledFromWrongThreadException: Only the original
 	            // thread that created a view hierarchy can touch its views."
 	            Main.this.runOnUiThread(new Runnable() {
-	                @Override
-					public void run() {
+	                public void run() {
 		       			Log.i("Main","Launching MainLoggedIn");
 		       			Intent intent = new Intent(Main.this, MainLoggedIn.class);
 		       			intent.putExtra("FacebookName",name);
@@ -99,28 +96,24 @@ public class Main extends Activity {
 	    }
 	}
 	public class FacebookAuthListener implements AuthListener {
-        @Override
-		public void onAuthSucceed() {
+        public void onAuthSucceed() {
             //tFacebookName.setText("You have logged in! ");
             //asking the facebook login...
             mAsyncRunner.request("me", new FacebookRequestListener());
             tLoginStatus.setText("Logged in !");
         }
 
-        @Override
-		public void onAuthFail(String error) {
+        public void onAuthFail(String error) {
             tLoginStatus.setText("Authentication Failed !");
         }
     }
 	public class FacebookLogoutListener implements LogoutListener {
-        @Override
-		public void onLogoutBegin() {
+        public void onLogoutBegin() {
             //tFacebookName.setText("Logging out...");
             //tFacebookId.setVisibility(View.INVISIBLE);
         }
 
-        @Override
-		public void onLogoutFinish() {
+        public void onLogoutFinish() {
             //tFacebookName.setText("You have logged out! ");
         }
     }
