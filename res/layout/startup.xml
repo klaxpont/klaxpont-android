@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/white"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:contentDescription="Logo Klaxpont"
+            android:id="@+id/imageView1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.00"
+            android:src="@drawable/klaxpont2" />
+		<TextView
+	        android:id="@+id/loginStartupStatus"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/LoginStatus"
+	        android:textColor="@drawable/red" />
+        <com.facebook.android.LoginButton
+            android:id="@+id/loginStartup"
+            android:layout_width="140dp"
+            android:layout_height="35dp"
+            android:src="@drawable/login" />
+
+        <Button
+            android:id="@+id/visitButton"
+            android:layout_width="140dp"
+            android:layout_height="35dp"
+            android:text="@string/VisitButton" >
+        </Button>
+
+    </LinearLayout>

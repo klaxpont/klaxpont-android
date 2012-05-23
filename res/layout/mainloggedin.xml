@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/white"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/mainLoggedInTopText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Not Logged In !!"
+        android:textColor="@drawable/black" />
+
+    <Button
+        android:id="@+id/recordAVideo"
+        android:layout_width="164dp"
+        android:layout_height="33dp"
+        android:text="Record a Video" />
+    
+    <Button
+        android:id="@+id/uploadAVideo"
+        android:layout_width="164dp"
+        android:layout_height="33dp"
+        android:text="Upload a Video" />
+    
+    <Button
+        android:id="@+id/watchAVideo"
+        android:layout_width="164dp"
+        android:layout_height="33dp"
+        android:text="Watch a Video" />
+    
+    <Button
+        android:id="@+id/settings"
+        android:layout_width="164dp"
+        android:layout_height="33dp"
+        android:text="Settings" />
+
+</LinearLayout>

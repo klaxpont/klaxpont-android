@@ -4,7 +4,8 @@
     <string name="namenull">name:</string>
     <string name="idnull">id:</string>
     <string name="mapKey">0j9U4qaH3Sxz6xh-snjdNF2KCMb_wwkP1-qpTKg</string>
-    <string name="mapKeyOrdiNadege">0FdyitwIf614X_S8MK4zvbKiLsxgZGd2i0tCCqA</string>
+    <string name="VisitButton">JustVisit</string>
+    <string name="LoginStatus"> </string>
 
 
 </resources>
