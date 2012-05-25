@@ -24,9 +24,27 @@ public final class Dailymotion {
 	
 	private static JSONObject json_token;
 	
+	public static String getEmbedUrl(String videoId) {
+		String embed_url=null;
+		String answer = http_get_access("https://api.dailymotion.com/video/"+videoId+"?fields=embed_url");
+		
+		try {
+    		JSONObject json = new JSONObject(answer);
+			embed_url = json.getString("embed_url");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		Log.d("Dailymotion","The embed_url of "+videoId+" is :"+answer);
+		return embed_url;
+		
+	}	
 	public static boolean set_access_token(String access_token) {
+		Log.i("Dailymotion","set_access_token:"+access_token);
 		return set_data_in_json_token("access_token",access_token);
 	}
+	
 	/* Not really useful...
 	public static boolean set_refresh_token(String refresh_token) {
 		return set_data_in_json_token("refresh_token",refresh_token);
@@ -118,6 +136,7 @@ public final class Dailymotion {
 	public static String getMyUserId() {
 		String returned=null;
 		JSONObject json = getJson_token();
+		Log.d("Dailymotion","json_token:"+json);
 		if(json==null){
 			Log.w("Dailymotion","You were not logged in to get the UserId...");
 			return returned;
@@ -263,6 +282,7 @@ public final class Dailymotion {
         String response=null;
         HttpURLConnection login_request=null;
         try {
+        	Log.d("Dailymotion","retrieving http get access:"+url);
         	URL login_url = new URL(url);
         	login_request = (HttpURLConnection) login_url.openConnection();
 	        login_request.setRequestMethod("GET");
@@ -338,24 +358,27 @@ public final class Dailymotion {
 	public static void setJson_token(JSONObject json_token) {
 		Dailymotion.json_token = json_token;
 	}
-	
-	public static ArrayList<Video> getListofMostViewVideoFromUser(String user)
+	public static ArrayList<VideoDailymotion> getListofBestRatedVideoFromUser(String user)
 	{
-		return getListOfVideosWithParameters("user="+user+"&sort=visited-month");
+		return getListOfVideosWithParameters("user="+user+"&sort=rated");
 	}
-	private static ArrayList<Video> getListOfVideosWithParameters(String parameters) {
+	public static ArrayList<VideoDailymotion> getListofMostViewVideoFromUser(String user)
+	{
+		return getListOfVideosWithParameters("user="+user+"&sort=visited");
+	}
+	private static ArrayList<VideoDailymotion> getListOfVideosWithParameters(String parameters) {
 
-		ArrayList<Video> videoList = new ArrayList<Video>();
+		ArrayList<VideoDailymotion> videoList = new ArrayList<VideoDailymotion>();
 		boolean has_more=true;
 		int page = 1;
 		while(has_more){
-			String answer = http_get_access("https://api.dailymotion.com/videos&page="+page+"&limit=10&fields=id,title,status,rating&"+parameters);
+			String answer = http_get_access("https://api.dailymotion.com/videos&page="+page+"&limit=10&fields=id,title,status,rating,views_total&"+parameters);
 			has_more = parseListOfVideosWithParametersAndAddToArray(answer,parameters,videoList);
 			page++;
 		}
 		return videoList;
 	}	
-	private static boolean parseListOfVideosWithParametersAndAddToArray(String answer,String parameters,ArrayList<Video> videoList) {
+	private static boolean parseListOfVideosWithParametersAndAddToArray(String answer,String parameters,ArrayList<VideoDailymotion> videoList) {
 		boolean returned=false;
 		int index=0;
 		if(answer==null)
@@ -365,10 +388,11 @@ public final class Dailymotion {
     		returned = (json.getString("has_more").compareTo("false")!=0);
 			JSONArray jsonvideolist = json.getJSONArray("list");
 			while(!jsonvideolist.isNull(index)){
-				videoList.add(new Video(
+				videoList.add(new VideoDailymotion(
 						jsonvideolist.getJSONObject(index).getString("id"),
 						jsonvideolist.getJSONObject(index).getString("title"),
 						jsonvideolist.getJSONObject(index).getInt("rating"),
+						jsonvideolist.getJSONObject(index).getInt("views_total"),
 						(jsonvideolist.getJSONObject(index).getString("status").compareTo("published")==0)
 						));
 				index++;

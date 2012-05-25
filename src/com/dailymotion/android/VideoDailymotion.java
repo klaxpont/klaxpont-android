@@ -1,20 +1,26 @@
 package com.dailymotion.android;
 
-public class Video {
+public class VideoDailymotion {
 	private String id;
 	private String title;
 	private int rating;
+	private int nbOfView;
 	private boolean published;//status
-	
-	public Video(String id,String title,int rating,boolean published){
+
+	public VideoDailymotion(String id,String title,int rating,int nbOfView,boolean published){
 		this.id = id;
 		this.title=title;
 		this.rating=rating;
+		this.nbOfView=nbOfView;
 		this.published=published;
 	}
+	public String stringize() {
+		String returned = "id:"+id+";title:"+title+";Viewed:"+nbOfView+"\n";
+		return returned;
+	}	
 	public void print() {
 		//System.out.println("id:"+id+"\n"+"title:"+title+"\n"+"rating:"+rating+"\n"+"published:"+published+"\n");
-		System.out.println("id:"+id+";"+"title:"+title+"\n");
+		System.out.println(this.stringize());
 	}
 	public String getId() {
 		return id;
@@ -39,6 +45,12 @@ public class Video {
 	}
 	public void setPublished(boolean published) {
 		this.published = published;
+	}
+	public int getNbOfView() {
+		return nbOfView;
+	}
+	public void setNbOfView(int nbOfView) {
+		this.nbOfView = nbOfView;
 	}
 	
 }

@@ -126,7 +126,7 @@ public class OldMainLoggedIn extends Activity implements SurfaceHolder.Callback{
 							"fun",
 							"klaxpont,cripont,cri,klaxon,pont,connards",
 							"true");
-					tVideoIdPublished.setText("Published Video ID:"+sVideoId);
+					tVideoIdPublished.setText("Published VideoDailymotion ID:"+sVideoId);
 */
 				} catch (Exception e) {
 					// TODO Auto-generated catch block

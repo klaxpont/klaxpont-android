@@ -12,8 +12,9 @@ public class MainLoggedIn extends Activity {
 	private TextView tMainLoggedInTopText;
 	private String sFacebookId="";
 	private String sFacebookName="";
-	private Button recordAVideo;
-	private Button uploadAVideo;
+	private Button bRecordAVideo;
+	private Button bUploadAVideo;
+	private Button bWatchVideos;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -25,17 +26,24 @@ public class MainLoggedIn extends Activity {
 		sFacebookName = sender.getExtras().getString("FacebookName");
 		
 		tMainLoggedInTopText.setText("Hello "+sFacebookName+" with id:"+sFacebookId);
+		//TO DELETE	       	startActivity(new Intent(MainLoggedIn.this, WatchVideos.class));		
 		
-		recordAVideo = (Button) this.findViewById(R.id.recordAVideo);
-		recordAVideo.setOnClickListener(new View.OnClickListener() {
+		bRecordAVideo = (Button) this.findViewById(R.id.recordAVideo);
+		bRecordAVideo.setOnClickListener(new View.OnClickListener() {
        		public void onClick(View v){
        	       	startActivity(new Intent(MainLoggedIn.this, RecordAVideo.class));
        		}
        	});
-		uploadAVideo = (Button) this.findViewById(R.id.uploadAVideo);
-		uploadAVideo.setOnClickListener(new View.OnClickListener() {
+		bUploadAVideo = (Button) this.findViewById(R.id.uploadAVideo);
+		bUploadAVideo.setOnClickListener(new View.OnClickListener() {
        		public void onClick(View v){
        	       	startActivity(new Intent(MainLoggedIn.this, UploadAVideo.class));
+       		}
+       	});
+		bWatchVideos = (Button) this.findViewById(R.id.watchVideos);
+		bWatchVideos.setOnClickListener(new View.OnClickListener() {
+       		public void onClick(View v){
+       	       	startActivity(new Intent(MainLoggedIn.this, WatchVideos.class));
        		}
        	});
 	}	

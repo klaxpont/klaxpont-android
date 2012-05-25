@@ -26,10 +26,10 @@
         android:text="Upload a Video" />
     
     <Button
-        android:id="@+id/watchAVideo"
+        android:id="@+id/watchVideos"
         android:layout_width="164dp"
         android:layout_height="33dp"
-        android:text="Watch a Video" />
+        android:text="Watch Videos" />
     
     <Button
         android:id="@+id/settings"

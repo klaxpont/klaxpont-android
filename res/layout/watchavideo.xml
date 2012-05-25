@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/white"
+    	android:stretchColumns="1" >
+
+   	     <TableRow>
+
+   	         <TextView
+   	            android:id="@+id/videoTitle"
+   	            android:layout_width="wrap_content"
+   	            android:layout_height="wrap_content"
+   	            android:text="No title"
+   	            android:textColor="@drawable/black"
+            	android:layout_span="2"
+            	android:layout_gravity="center" />
+
+       	 </TableRow>
+   	     <TableRow android:id="@+id/videoRatedLine">
+
+   	         <TextView
+   	            android:id="@+id/videoNbOfView"
+   	            android:layout_width="70dp"
+   	            android:layout_height="wrap_content"
+   	            android:text="Viewed: X"
+   	            android:textColor="@drawable/black"
+            	android:layout_gravity="center"/>
+
+   	         <RatingBar
+   	            android:id="@+id/videoRate"
+   	            style="@style/klaxonRatingBar"
+   	            android:layout_height="wrap_content"
+   	            android:clickable="false"
+   	            android:numStars="5"
+   	            android:rating="1"
+   	            android:stepSize="1"
+            	android:layout_gravity="left"/>
+		    
+        </TableRow>
+        <TableRow>
+
+            <VideoView
+                android:id="@+id/videoWindow"
+                android:layout_width="220dp"
+                android:layout_height="220dp"
+            	android:layout_span="2" />
+
+        </TableRow>
+        <TableRow>
+		    <RatingBar
+		        android:id="@+id/videoRateGiven"
+           		android:numStars="5"
+            	android:stepSize="1" 
+            	style="@style/klaxonRatingBar"
+            	android:rating="5"
+            	android:layout_width="wrap_content"
+            	android:layout_height="wrap_content"
+            	android:layout_span="2" />
+        </TableRow>
+
+    </TableLayout>

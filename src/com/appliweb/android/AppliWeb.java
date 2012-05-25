@@ -18,6 +18,8 @@ public final class AppliWeb {
 	private static JSONObject json_dailymotion_token=null;
 	
 	public static JSONObject getJson_dailymotion_token() {
+		if(json_dailymotion_token==null)
+			getDailymotionAccessToken();
 		return json_dailymotion_token;
 	}
 

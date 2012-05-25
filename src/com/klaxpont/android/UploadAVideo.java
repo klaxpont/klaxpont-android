@@ -33,7 +33,7 @@ public class UploadAVideo extends Activity {
        			startActivityForResult(intent, REQUEST_PICK_FILE);
        		}
        	});
-		startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse("http://www.youtube.com/watch?v=tsDYIgX_gDs")));
+		//startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse("http://www.youtube.com/watch?v=tsDYIgX_gDs")));
 		/*
 		vPreviewUploadVideo = (VideoView)findViewById(R.id.previewUploadVideo);
         vPreviewUploadVideo.setVideoURI(Uri.parse("http://www.videos-quad.fr/videos/68/vid-00018-20100131-1651.3gp"));

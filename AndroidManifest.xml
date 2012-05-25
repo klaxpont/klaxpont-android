@@ -20,6 +20,10 @@
 		<activity android:name="MainLoggedIn"></activity>
 		<activity android:name="RecordAVideo"></activity>
 		<activity android:name="UploadAVideo"></activity>
+		<activity android:name="WatchVideos"></activity>
+		<activity android:name="WatchAVideo"></activity>
+		<activity android:name="VideoPlayer"></activity>
+		<activity android:name="MediaPlayerTest"></activity>
 		<activity android:name="OldMainLoggedIn">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />

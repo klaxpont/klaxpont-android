@@ -1,8 +1,11 @@
 package com.klaxpont.android;
 
+import java.io.File;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.dailymotion.android.FilePickerActivity;
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.BaseRequestListener;
 import com.facebook.android.Facebook;
@@ -27,6 +30,9 @@ import android.widget.TextView;
 // Sets the content view to R.layout.main
 public class Main extends Activity {
 
+	private static final int RETURN_FROM_MAIN_LOGGED_IN = 1;
+	private static final int RETURN_FROM_VISITOR = 2;
+	
 	private TextView tLoginStatus;
 	private LoginButton bLoginButton;
 	private Button bVisitButton;
@@ -59,7 +65,7 @@ public class Main extends Activity {
 	       		public void onClick(View v){
 	       			Log.i("Main","Launching VisitButton");
 	       			Intent intent = new Intent(Main.this, OldMainLoggedIn.class);
-	       			startActivity(intent);
+	       			startActivityForResult(intent, RETURN_FROM_VISITOR);
 	       			Log.i("Main","Launched VisitButton");
 	       		}
 	       	});
@@ -84,7 +90,7 @@ public class Main extends Activity {
 		       			Intent intent = new Intent(Main.this, MainLoggedIn.class);
 		       			intent.putExtra("FacebookName",name);
 		       			intent.putExtra("FacebookId",id);
-		       			startActivity(intent);
+		       			startActivityForResult(intent, RETURN_FROM_MAIN_LOGGED_IN);
 		       			Log.i("Main","Launched MainLoggedIn");
 	                }
 	            });
@@ -116,5 +122,19 @@ public class Main extends Activity {
         public void onLogoutFinish() {
             //tFacebookName.setText("You have logged out! ");
         }
+    }
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+	    switch(requestCode) {
+        case RETURN_FROM_MAIN_LOGGED_IN:
+        	Log.i("Main","Returned from main logged in, going to stop");
+        	finish();
+        	return;
+        case RETURN_FROM_VISITOR:
+		default :
+            
+            break;
+        }
+    	mFacebook.authorizeCallback(requestCode, resultCode, data);
     }
 }
