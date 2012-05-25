@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@drawable/white"
+    android:layout_height="wrap_content"
     android:gravity="center_horizontal"
     android:orientation="vertical" >
     
@@ -12,14 +11,8 @@
         android:layout_height="wrap_content"
         android:text="Select A File" />
 
-	<VideoView
-	    android:id="@+id/previewUploadVideo"
-	    android:layout_width="257dp"
-	    android:layout_height="158dp" />
-    
 	<TextView android:id="@+id/textUploadVideoSelected" 
         android:text="No file yet"
-        android:textColor="@drawable/black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 		/>
@@ -32,7 +25,6 @@
     
     <TextView android:id="@+id/video_published_id_returned" 
         android:text="Video not published yet"
-        android:textColor="@drawable/black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 		/>

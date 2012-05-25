@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@drawable/white"
+    android:layout_height="wrap_content"
     android:gravity="center_horizontal"
     android:orientation="vertical" >
 
@@ -10,8 +9,7 @@
         android:id="@+id/dutext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Not Implemented Yet !!"
-        android:textColor="@drawable/black" />
+        android:text="Not Implemented Yet !!" />
 
     <ImageButton
         android:id="@+id/buttonRecord"
@@ -20,6 +18,12 @@
         android:background="@drawable/record_on"
         />
 
+    <TextView
+        android:id="@+id/pressHorn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Press The horn !!" />
+    
     <ImageButton
         android:id="@+id/buttonHorn"
         android:layout_width="130dp"

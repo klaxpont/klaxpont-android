@@ -42,7 +42,6 @@ public class OldMainLoggedIn extends Activity implements SurfaceHolder.Callback{
 	private File fSelectedFile;
 	private Button bFileSelect;
 	private TextView tFileSelected;
-	private TextView tVideoIdPublished;
 	private Button bSendFile;
 	private LoginButton bLoginButton;
     private TextView tFacebookName;
@@ -55,9 +54,6 @@ public class OldMainLoggedIn extends Activity implements SurfaceHolder.Callback{
     private Facebook mFacebook;
     private AsyncFacebookRunner mAsyncRunner;
     
-    //private String sAccessTokenDailymotion="";
-    private String sVideoId="";
-
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,7 +64,6 @@ public class OldMainLoggedIn extends Activity implements SurfaceHolder.Callback{
         
         setContentView(R.layout.oldmainloggedin);
         bMaps = (Button) findViewById(R.id.maps_button);
-        tVideoIdPublished = (TextView) this.findViewById(R.id.video_published_id);
         bFileSelect = (Button) findViewById(R.id.select_file_button);
         tFileSelected = (TextView) this.findViewById(R.id.file_selected);
         bSendFile = (Button) findViewById(R.id.send_file_button);

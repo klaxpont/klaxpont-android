@@ -9,7 +9,8 @@
 		<uses-library android:name="com.google.android.maps" />
 		<activity android:name=".Main"
 		    android:label="@string/app_name"
-		    android:configChanges="keyboardHidden">
+		    android:configChanges="keyboardHidden" 
+		    android:theme="@android:style/Theme.NoTitleBar" >
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
@@ -17,13 +18,14 @@
 		</activity>
 		<activity android:name="com.dailymotion.android.FilePickerActivity"></activity>
 		<activity android:name="Maps"></activity>
-		<activity android:name="MainLoggedIn"></activity>
 		<activity android:name="RecordAVideo"></activity>
 		<activity android:name="UploadAVideo"></activity>
 		<activity android:name="WatchVideos"></activity>
 		<activity android:name="WatchAVideo"></activity>
 		<activity android:name="VideoPlayer"></activity>
 		<activity android:name="MediaPlayerTest"></activity>
+		<activity android:name="MainLoggedInTab"></activity>
+		<activity android:name="KlaxpontSettings"></activity>
 		<activity android:name="OldMainLoggedIn">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />

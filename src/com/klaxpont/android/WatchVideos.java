@@ -1,6 +1,5 @@
 package com.klaxpont.android;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import com.appliweb.android.AppliWeb;
@@ -9,7 +8,6 @@ import com.dailymotion.android.VideoDailymotion;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,16 +16,12 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.MediaController;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.VideoView;
 
 public class WatchVideos extends Activity implements AdapterView.OnItemSelectedListener {
 	private Spinner spVideoType;
-	private ArrayList<VideoDailymotion> videoList;
 	private ListView lvVideoList;
-	private String videoType[] = {"Most Viewed","Best Rated","Closer","From A User"}; //static for the moment
+	private String videoType[] = {"Most Viewed","Best Rated"}; //static for the moment
 	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

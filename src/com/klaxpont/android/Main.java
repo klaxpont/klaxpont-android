@@ -1,11 +1,8 @@
 package com.klaxpont.android;
 
-import java.io.File;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.dailymotion.android.FilePickerActivity;
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.BaseRequestListener;
 import com.facebook.android.Facebook;
@@ -16,15 +13,12 @@ import com.facebook.android.SessionEvents.LogoutListener;
 import com.facebook.android.SessionStore;
 import com.facebook.android.Util;
 import com.facebook.android.SessionEvents.AuthListener;
-import com.klaxpont.android.OldMainLoggedIn.SampleRequestListener;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 // Sets the content view to R.layout.main
@@ -87,7 +81,8 @@ public class Main extends Activity {
 	            Main.this.runOnUiThread(new Runnable() {
 	                public void run() {
 		       			Log.i("Main","Launching MainLoggedIn");
-		       			Intent intent = new Intent(Main.this, MainLoggedIn.class);
+		       			//Intent intent = new Intent(Main.this, MainLoggedIn.class);
+		       			Intent intent = new Intent(Main.this, MainLoggedInTab.class);
 		       			intent.putExtra("FacebookName",name);
 		       			intent.putExtra("FacebookId",id);
 		       			startActivityForResult(intent, RETURN_FROM_MAIN_LOGGED_IN);

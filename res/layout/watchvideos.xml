@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@drawable/black"
+    android:layout_height="wrap_content"
     android:gravity="center_horizontal"
     android:orientation="vertical" >
 
@@ -14,8 +13,6 @@
     <ListView
         android:id="@+id/listViewWatchVideos"
         android:layout_width="290dp"
-        android:layout_height="0dp"
-        android:layout_weight="0.85" >
-    </ListView>
+        android:layout_height="300dp" />
 
 </LinearLayout>
