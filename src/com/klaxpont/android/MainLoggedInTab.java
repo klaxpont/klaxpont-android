@@ -2,16 +2,22 @@ package com.klaxpont.android;
 
 import android.app.TabActivity;
 import android.content.Intent;
-import android.media.audiofx.BassBoost.Settings;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TabHost;
 
 public class MainLoggedInTab extends TabActivity {
 
 	private TabHost tabHost;
+	private static int myFacebookId;
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+		Intent sender=getIntent();
+		myFacebookId = sender.getExtras().getInt("FacebookId");
+		Log.i("MainLoggedInTab","My facebook id is:"+myFacebookId);
+		
         setContentView(R.layout.mainloggedintab);
         tabHost = getTabHost();
         tabHost.addTab(tabHost.newTabSpec("tab1").setIndicator("Watch",getResources().getDrawable(R.drawable.videofolder)
@@ -32,4 +38,9 @@ public class MainLoggedInTab extends TabActivity {
         }
         */
     }
+	
+	public static int getFacebookId(){
+		return myFacebookId;
+		
+	}
 }

@@ -8,7 +8,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -79,9 +78,6 @@ public class Maps extends MapActivity implements LocationListener {
 	public void onLocationChanged(Location location) {
 		lat = location.getLatitude();
 		lng = location.getLongitude();
-		Toast.makeText(getBaseContext(),
-				"Location change to : Latitude = " + lat + " Longitude = " + lng,
-				Toast.LENGTH_SHORT).show();
 		GeoPoint p = new GeoPoint((int) (lat * 1E6), (int) (lng * 1E6));
 		mc.animateTo(p);
 		mc.setCenter(p);

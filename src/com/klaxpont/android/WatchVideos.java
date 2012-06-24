@@ -74,8 +74,9 @@ public class WatchVideos extends Activity implements AdapterView.OnItemSelectedL
 			public void onItemClick(AdapterView<?> adapter, View view, int position, long arg)   {
 				Log.d("WatchVideos","Asked to watch :"+videoList.get(position).stringize());
 				Dailymotion.getEmbedUrl(videoList.get(position).getId());
-				Intent intent = new Intent(WatchVideos.this, WatchAVideo.class);
-       			intent.putExtra("Title",videoList.get(position).getTitle());
+				//Intent intent = new Intent(WatchVideos.this, WatchAVideo.class);
+				Intent intent = new Intent(WatchVideos.this, MediaPlayerTest.class);
+				intent.putExtra("Title",videoList.get(position).getTitle());
        			intent.putExtra("Path",Dailymotion.getEmbedUrl(videoList.get(position).getId()));
        			intent.putExtra("NbOfView",videoList.get(position).getNbOfView());
        			intent.putExtra("Rate",videoList.get(position).getRating());

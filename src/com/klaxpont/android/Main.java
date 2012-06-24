@@ -84,7 +84,7 @@ public class Main extends Activity {
 		       			//Intent intent = new Intent(Main.this, MainLoggedIn.class);
 		       			Intent intent = new Intent(Main.this, MainLoggedInTab.class);
 		       			intent.putExtra("FacebookName",name);
-		       			intent.putExtra("FacebookId",id);
+		       			intent.putExtra("FacebookId",Integer.parseInt(id));
 		       			startActivityForResult(intent, RETURN_FROM_MAIN_LOGGED_IN);
 		       			Log.i("Main","Launched MainLoggedIn");
 	                }

@@ -58,6 +58,8 @@ public class WatchAVideo extends Activity {
        	vWatchAVideo.start();
        	*/
        	rbVideoRateGiven = (RatingBar)findViewById(R.id.videoRateGiven);
+       	rbVideoRateGiven.setNumStars(5);
+       	rbVideoRateGiven.setRating(5);
        	
 	}
 }
