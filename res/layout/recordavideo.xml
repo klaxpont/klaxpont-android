@@ -11,24 +11,55 @@
         android:layout_height="wrap_content"
         android:text="Not Implemented Yet !!" />
 
-    <ImageButton
-        android:id="@+id/buttonRecord"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:background="@drawable/record_on"
-        />
+    <VideoView
+        android:id="@+id/videoView1"
+        android:layout_width="304dp"
+        android:layout_height="239dp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <ImageButton
+            android:id="@+id/buttonRecord"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/record_on" />
+
+        <ImageButton
+            android:id="@+id/imageButton1"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/pause" />
+
+        <ImageButton
+            android:id="@+id/imageButton2"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/stop" />
+
+        <ImageButton
+            android:id="@+id/buttonHorn"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/horn"
+            android:text="Horn !!" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/pressHorn"
-        android:layout_width="wrap_content"
+        android:layout_width="206dp"
+        android:layout_height="match_parent"
+        android:text="Record title:" />
+
+    <EditText
+        android:id="@+id/editText1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Press The horn !!" />
-    
-    <ImageButton
-        android:id="@+id/buttonHorn"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:text="Horn !!"
-        android:background="@drawable/horn" />
+        android:ems="10" >
+
+        <requestFocus />
+    </EditText>
 
 </LinearLayout>
