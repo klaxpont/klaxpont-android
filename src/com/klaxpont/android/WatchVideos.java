@@ -8,6 +8,7 @@ import com.dailymotion.android.VideoDailymotion;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -75,12 +76,15 @@ public class WatchVideos extends Activity implements AdapterView.OnItemSelectedL
 				Log.d("WatchVideos","Asked to watch :"+videoList.get(position).stringize());
 				Dailymotion.getEmbedUrl(videoList.get(position).getId());
 				//Intent intent = new Intent(WatchVideos.this, WatchAVideo.class);
-				Intent intent = new Intent(WatchVideos.this, MediaPlayerTest.class);
+				//Intent intent = new Intent(WatchVideos.this, MediaPlayerTest.class);
+				startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(Dailymotion.getEmbedUrl(videoList.get(position).getId()))));
+				/*
 				intent.putExtra("Title",videoList.get(position).getTitle());
        			intent.putExtra("Path",Dailymotion.getEmbedUrl(videoList.get(position).getId()));
        			intent.putExtra("NbOfView",videoList.get(position).getNbOfView());
        			intent.putExtra("Rate",videoList.get(position).getRating());
        			startActivity(intent);
+       			*/
 			}
 		});
 	}

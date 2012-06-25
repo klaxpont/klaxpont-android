@@ -51,12 +51,15 @@ public class WatchAVideo extends Activity {
        		tbVideoRatedLine = (TableRow)findViewById(R.id.videoRatedLine);
        		tbVideoRatedLine.setVisibility(View.INVISIBLE);
        	}
-       	/*
-       	vWatchAVideo.setVideoPath(sVideoPath);
-       	vWatchAVideo.setMediaController(new MediaController(this));
-       	vWatchAVideo.requestFocus();
-       	vWatchAVideo.start();
-       	*/
+       	
+       	MediaController mc = new MediaController(this);
+		mc.setAnchorView(vWatchAVideo);
+		mc.setMediaPlayer(vWatchAVideo);
+		Uri video = Uri.parse(sVideoPath);
+		vWatchAVideo.setMediaController(mc);
+		vWatchAVideo.setVideoURI(video);
+		vWatchAVideo.start();
+       	
        	rbVideoRateGiven = (RatingBar)findViewById(R.id.videoRateGiven);
        	rbVideoRateGiven.setNumStars(5);
        	rbVideoRateGiven.setRating(5);
