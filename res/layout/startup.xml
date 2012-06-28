@@ -19,10 +19,11 @@
 	        android:layout_height="wrap_content"
 	        android:text="@string/LoginStatus"
 	        android:textColor="@drawable/red" />
+
         <com.facebook.android.LoginButton
             android:id="@+id/loginStartup"
-            android:layout_width="140dp"
-            android:layout_height="35dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:src="@drawable/login" />
 
         <Button

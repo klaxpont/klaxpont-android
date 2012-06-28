@@ -11,7 +11,6 @@ import java.net.URL;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.provider.SyncStateContract.Constants;
 import android.util.Log;
 
 public final class AppliWeb {
